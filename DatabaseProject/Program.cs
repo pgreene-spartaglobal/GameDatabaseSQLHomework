@@ -12,34 +12,12 @@ namespace DatabaseProject
         
         static void Main(string[] args)
         {
-            Game game1 = new Game();
-            game1.Name = "Tetris";
-            game1.Genre = "Arcade";
-            game1.Type = "Puzzle";
-            game1.Review = "Overwhelmingly Positive";
+
 
             string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CSharpGame;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection conn = new SqlConnection(connectionString);
-            string insertString = String.Format("INSERT INTO Games (Name, Genre, Type, Review) VALUES ('{0}', '{1}', '{2}', '{3}')", game1.Name, game1.Genre, game1.Type, game1.Review);
+            Create.AddGame(conn, "Pacman", "Maze", "Arcade", "Very Positive");
 
-            try
-            {                
-                conn.Open();
-                //SqlCommand insertCommand = new SqlCommand(insertString, conn);
-                SqlCommand selectCommand = new SqlCommand("SELECT * FROM Games", conn);
-                Game game2 = new Game();
-                
-                //insertCommand.ExecuteReader();
-                //selectCommand.ExecuteReader();
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("Something happened to the server " + ex.Message);
-            }
-            finally
-            {
-                conn.Close();
-            }
              
         }
     }
@@ -50,6 +28,14 @@ namespace DatabaseProject
         string type = "";
         string review = "";
 
+        public Game(string name, string genre, string type, string review)
+        {
+            Name = name;
+            Genre = genre;
+            Type = type;
+            Review = review;
+        }
+
         public string Name { get => name; set => name = value; }
         public string Genre { get => genre; set => genre = value; }
         public string Type { get => type; set => type = value; }
@@ -58,13 +44,28 @@ namespace DatabaseProject
 
     class Create
     {
-        public void CreateGame()
+        public static void AddGame(SqlConnection conn, string name, string genre, string type, string review)
         {
-            Game game1 = new Game();
-            game1.Name = "Tetris";
-            game1.Genre = "Arcade";
-            game1.Type = "Puzzle";
-            game1.Review = "Overwhelmingly Positive";
+            Game game = new Game(name, genre, type, review);
+
+            string insertString = String.Format("INSERT INTO Games (Name, Genre, Type, Review) " +
+                                                "VALUES ('{0}', '{1}', '{2}', '{3}')", 
+                                                game.Name, game.Genre, game.Type, game.Review);
+
+            try
+            {
+                conn.Open();
+                SqlCommand insertCommand = new SqlCommand(insertString, conn);
+                insertCommand.ExecuteReader();
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Something happened to the server " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
 
