@@ -12,13 +12,12 @@ namespace DatabaseProject
         
         static void Main(string[] args)
         {
-
-
             string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CSharpGame;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection conn = new SqlConnection(connectionString);
             //Create.AddGame(conn, "Pacman", "Maze", "Arcade", "Very Positive");
             Read.ReadGames(conn);
-             
+            //Update.UpdateGame(conn, "Review", "Mostly Positive", 1);
+            Read.ReadGames(conn);
         }
     }
     public class Game
@@ -67,9 +66,6 @@ namespace DatabaseProject
                 conn.Close();
             }
         }
-
-
-
     }
 
     class Read
@@ -106,12 +102,35 @@ namespace DatabaseProject
 
     class Update
     {
+        public static void UpdateGame(SqlConnection conn, string columnName, string value, int id)
+        {
+            string updateString = String.Format("UPDATE Games " +
+                                  "SET {0} = '{1}' " +
+                                  "WHERE ID = '{2}' ", columnName, value, id);
 
+            try
+            {
+                conn.Open();
+                SqlCommand updateCommand = new SqlCommand(updateString, conn);
+                updateCommand.ExecuteReader();
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Something happened to the server " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
     }
 
     class Delete
     {
+        public static void DeleteGame()
+        {
 
+        }
     }
 }
 
