@@ -15,8 +15,10 @@ namespace DatabaseProject
             string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CSharpGame;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection conn = new SqlConnection(connectionString);
             //Create.AddGame(conn, "Pacman", "Maze", "Arcade", "Very Positive");
-            Read.ReadGames(conn);
+            //Read.ReadGames(conn);
             //Update.UpdateGame(conn, "Review", "Mostly Positive", 1);
+            //Read.ReadGames(conn);
+            //Delete.DeleteGame(conn, 1);
             Read.ReadGames(conn);
         }
     }
@@ -127,19 +129,25 @@ namespace DatabaseProject
 
     class Delete
     {
-        public static void DeleteGame()
+        public static void DeleteGame(SqlConnection conn, int id)
         {
+            string deleteString = String.Format("DELETE FROM Games " +
+                      "WHERE ID = '{0}' ", id);
 
+            try
+            {
+                conn.Open();
+                SqlCommand deleteCommand = new SqlCommand(deleteString, conn);
+                deleteCommand.ExecuteReader();
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Something happened to the server " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
     }
 }
-
-
-//using (conn = new SqlConnection("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CSharpGame;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"))
-//{
-//    conn.Open();
-//    Console.WriteLine(conn.State);
-//    SqlCommand selectCommand = new SqlCommand("SELECT * FROM Games", conn);
-//    selectCommand.ExecuteReader();
-//    //SqlCommand insertCommand = new SqlCommand("INSERT INTO Games (Name, Genre, Type, Review) VALUES (Tetris, Arcade, Puzzle, Overwhelmingly Positive)", conn);
-//}
