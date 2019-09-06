@@ -16,8 +16,8 @@ namespace DatabaseProject
 
             string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CSharpGame;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
             SqlConnection conn = new SqlConnection(connectionString);
-            Create.AddGame(conn, "Pacman", "Maze", "Arcade", "Very Positive");
-
+            //Create.AddGame(conn, "Pacman", "Maze", "Arcade", "Very Positive");
+            Read.ReadGames(conn);
              
         }
     }
@@ -74,7 +74,34 @@ namespace DatabaseProject
 
     class Read
     {
+        public static void ReadGames(SqlConnection conn)
+        {
+            string selectString = "SELECT * FROM Games";
 
+            try
+            {
+                conn.Open();
+                SqlCommand selectCommand = new SqlCommand(selectString, conn);
+                SqlDataReader dataReader = selectCommand.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    for (int i = 0; i < dataReader.FieldCount; i++)
+                    {
+                        Console.WriteLine(dataReader.GetValue(i));
+                    }
+                    Console.WriteLine();
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Something happened to the server " + ex.Message);
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
     }
 
     class Update
